@@ -2,8 +2,7 @@ import psycopg
 import os
 from dotenv import load_dotenv
 
-class DB():
-
+class DB(object):
   def __init__(self):
     load_dotenv()
     self.dbname = os.environ["DB_NAME"]
