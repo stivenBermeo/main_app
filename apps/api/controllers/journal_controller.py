@@ -1,22 +1,11 @@
-from utils.db import DB
-from datetime import datetime
-from pydantic import BaseModel, Field
-
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
 
+from utils.db import DB
+from models.entry import ModifiableEntryFields
+
+
 Database = DB()
-
-class ModifiableEntryFields(BaseModel):
-  title: str | None = Field(description="The title", max_length=100)
-  body: str | None = Field(description="The content", max_length=590)
-
-class Entry(ModifiableEntryFields):
-  id: int
-  timestamp: datetime
-  title: str
-  body: str
-
 class JournalController():
   async def index(self):
     return { "data": Database.fetchAllEntries() }
@@ -25,6 +14,7 @@ class JournalController():
     return { "data": Database.fetch("SELECT * FROM entries WHERE id = %s", [entry_id]) }
   
   async def store(self, entry: ModifiableEntryFields):
+    print("INSERT INTO entries (title, body) VALUES (%s, %s)", [(entry.title, entry.body,)])
     Database.upsert("INSERT INTO entries (title, body) VALUES (%s, %s)", [(entry.title, entry.body,)])
     return { "data": Database.fetchAllEntries() }
   
