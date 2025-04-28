@@ -58,9 +58,6 @@ function App() {
   }
 
   const mockEntry = () => {
-    setDefaultTitle("setDefaultTitle")
-    setDefaultBody("setDefaultBody")
-
     fetch(`http://127.0.0.1:8000/blogs/mock`, {
       mode: 'cors',
     })
@@ -72,41 +69,45 @@ function App() {
   }
 
   return <>
-    <div>
-      <h4>Create New Entry</h4>
-      <form onSubmit={(evt) => createNewEntry(evt)}>
-        <table>
-          <tbody>
-          <tr>
-            <td><label htmlFor="title">Title</label></td>
-            <td><input id="title" name="title" placeholder='Title' defaultValue={defaultTitle} required/></td>
-          </tr>
-          <tr>
-            <td><label htmlFor="body">Body</label></td>
-            <td><textarea id="body" name="body" placeholder='Body' defaultValue={defaultBody} required/></td>
-          </tr>
-          </tbody>
-        </table>
-        <input type="submit" value="Create Entry" />
-      </form>
-      <button onClick={() => {mockEntry()}}>Mock Blog</button>
+    <div className='container-fluid vh-100 d-flex py-5'>
+      <div className='col-md-6 d-inline-block h-100 px-3 border border-danger'>
+        <h2>Create New Entry</h2>
+        <form onSubmit={(evt) => createNewEntry(evt)}>
+          <div className='my-3'>
+            <input className="form-control" id="title" name="title" placeholder="Title" defaultValue={defaultTitle} required/>
+          </div>
+          <div className='my-3'>
+            <textarea className="form-control" id="body" name="body" placeholder='Body' defaultValue={defaultBody} required/>
+          </div>
+          <div className='d-flex'>
+            <div className="btn btn-secondary mx-auto" onClick={() => {mockEntry()}}>Mock Blog</div>
+            <button className='btn btn-primary mx-auto'>Create Entry</button>
+          </div>
+        </form>
+      </div>
+      <div className='col-md-6 d-inline-block h-100 px-3 overflow-scroll border border-danger'>
+        <h2>Latest Entries</h2>
+        {entries.map((entry, index) => 
+          <div key={"index_"+index} className='my-5 shadow-sm p-2'>
+            <div className='d-flex'>
+              <div className='d-inline-block'>
+                <NavLink to={`/detail/${entry[BLOG_FIELDS.id]}`}>
+                  <h3>{entry[BLOG_FIELDS.title]}</h3>
+                </NavLink>
+              </div>
+              <div className='d-inline-block mx-auto'>
+                {!entry?.[BLOG_FIELDS.summary] && <button className="btn btn-secondary" onClick={() => getEntrySummary(entry[BLOG_FIELDS.id], index)}>Summarize</button>}
+              </div>
+            </div>
+            {
+              entry?.[BLOG_FIELDS.summary] &&
+              <p>{entry?.[BLOG_FIELDS.summary]}</p>
+            }
+          </div>
+        )}
+      </div>
     </div>
-    <div>
-      <h2>Latest Entries</h2>
-      {entries.map((entry, index) => 
-        <div key={"index_"+index}>
-          <h3>{entry[BLOG_FIELDS.title]}</h3>
-          {
-            entry?.[BLOG_FIELDS.summary] ?
-            <p>{entry?.[BLOG_FIELDS.summary]}</p> :
-            <button onClick={() => getEntrySummary(entry[BLOG_FIELDS.id], index)}>Summarize</button>
-          }
-          <NavLink to={`/detail/${entry[BLOG_FIELDS.id]}`}> Go to article </NavLink>
-          
-        </div>
-      )}
-    </div>
-  </>
+  </> 
 }
 
 export default App
