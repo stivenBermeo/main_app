@@ -36,24 +36,24 @@ function Detail() {
   }
 
   return (
-    <>
+    <div className="container py-5">
       <div>
         <NavLink to="/">Go Back</NavLink>
       </div>
       {
         updatingTitle ?
-        <input onBlur={(evt) => updateField('title', evt.target.value, setUpdatingTitle)} defaultValue={entry[BLOG_FIELDS.title]}/> :
+        <input className="form-control" onBlur={(evt) => updateField('title', evt.target.value, setUpdatingTitle)} defaultValue={entry[BLOG_FIELDS.title]}/> :
         <h2 onClick={() => setUpdatingTitle(true)}>{entry[BLOG_FIELDS.title]}</h2>
       }
       {
 
         updatingBody ?
-        <input onBlur={(evt) => updateField('body', evt.target.value, setUpdatingBody)} defaultValue={entry[BLOG_FIELDS.body]}/> :
+        <input className="form-control"onBlur={(evt) => updateField('body', evt.target.value, setUpdatingBody)} defaultValue={entry[BLOG_FIELDS.body]}/> :
         <p onClick={() => setUpdatingBody(true)}>{entry[BLOG_FIELDS.body]}</p>
       }
       <small>{new Date(entry[BLOG_FIELDS.timestamp]).toLocaleString()} </small>
       
-    </>
+      </div>
   )
 }
 
