@@ -1,5 +1,6 @@
 import './App.css'
-import { Link, NavLink } from 'react-router'
+import { Link } from 'react-router'
+
 import { BLOG_FIELDS } from './constants';
 import { useEffect, useState } from 'react';
 

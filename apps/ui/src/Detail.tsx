@@ -1,6 +1,6 @@
 import { useParams, NavLink } from "react-router";
 import { BLOG_FIELDS } from "./constants";
-
+import HttpClient from "./utils/HttpClient"
 import './App.css'
 import { useState, useEffect } from "react";
 
@@ -13,25 +13,23 @@ function Detail() {
   const [updatingTitle, setUpdatingTitle] = useState(false)
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/blogs/${params.entryId}`, { mode: 'cors', })
-    .then(response => response.json())
+    HttpClient.simpleRequest(`blogs/${params.entryId}`)
     .then(response => setEntry(response.data[0]))
   }, [params.entryId, setEntry]);
 
   const updateField = (field: 'title' | 'body', newValue: string, stateToggle: (bool: boolean) => void ) => {
     const payload = { [field]: newValue };
-    console.log({ payload })
-    fetch(`http://127.0.0.1:8000/blogs/${params.entryId}`,
-      {
-        mode: 'cors',
-        method: 'put',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-    .then(response => response.json())
+    
+    HttpClient.simpleRequest(`blogs/${params.entryId}`, {
+      method: 'put',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
     .then(response => {
-      setEntry(response.data[0])
-      stateToggle(false)
+      if (response) {
+        setEntry(response.data[0])
+        stateToggle(false)
+      }
     })
   }
 
