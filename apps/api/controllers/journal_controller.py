@@ -2,7 +2,7 @@ from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from utils.db import DB
-from models.entry import ModifiableEntryFields
+from models.entry import ModifiableEntryFields, MockEntryModel
 
 
 Database = DB()
@@ -14,7 +14,6 @@ class JournalController():
     return { "data": Database.fetch("SELECT * FROM entries WHERE id = %s", [entry_id]) }
   
   async def store(self, entry: ModifiableEntryFields):
-    print("INSERT INTO entries (title, body) VALUES (%s, %s)", [(entry.title, entry.body,)])
     Database.upsert("INSERT INTO entries (title, body) VALUES (%s, %s)", [(entry.title, entry.body,)])
     return { "data": Database.fetchAllEntries() }
   
@@ -43,7 +42,7 @@ class JournalController():
     ]
     blogEntryResponse = model.invoke(messages)
 
-    structuredModel = model.with_structured_output(ModifiableEntryFields)
+    structuredModel = model.with_structured_output(MockEntryModel)
     response = structuredModel.invoke([
       SystemMessage("Extract title and body from the following string"),
       HumanMessage(blogEntryResponse.content)

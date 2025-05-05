@@ -24,30 +24,24 @@ journal_controller = JournalController()
 
 @app.get("/blogs")
 async def root():
-  print("async def root(")
   return await journal_controller.index()
 
 @app.get("/blogs/mock")
 def mock_blog_entry():
-  print("def mock_blog_entry(")
   return journal_controller.mock_blog_entry()
 
 @app.get("/blogs/{entry_id}")
 async def detail(entry_id: int):
-  print("async def detail(entry_id: int")
   return await journal_controller.show(entry_id)
 
 @app.post("/blogs")
 async def create(entry: ModifiableEntryFields):
-  print("async def create(entry")
   return await journal_controller.store(entry)
 
 @app.put("/blogs/{entry_id}")
 async def update(entry: ModifiableEntryFields, entry_id: int):
-  print("async def update(entry, entry_id: int")
   return await journal_controller.update(entry, entry_id)
 
 @app.get("/summarize/{entry_id}")
 def summarize_entry(entry_id: int):
-  print("def summarize_entry(entry_id: int")
   return journal_controller.summarize_entry(entry_id)
