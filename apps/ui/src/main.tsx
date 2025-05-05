@@ -9,7 +9,6 @@ import { ToastContainer } from 'react-toastify';
 
 import './index.css'
 import App from './App.tsx'
-import Detail from './Detail.tsx'
 
 const queryClient = new QueryClient();
 
@@ -19,7 +18,6 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <Routes>
           <Route path="/"  element={<App />}/>
-          <Route path="/detail/:entryId"  element={<Detail />}/>
         </Routes>
         </QueryClientProvider>
     </BrowserRouter>
