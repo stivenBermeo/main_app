@@ -1,5 +1,6 @@
 import './App.css'
 import { Link } from 'react-router'
+import HttpClient from './utils/HttpClient';
 
 import { BLOG_FIELDS } from './constants';
 import { useEffect, useState } from 'react';
@@ -12,22 +13,15 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [defaultBody, setDefaultBody] : [any[], any] = useState([])
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/blogs`, {
-      mode: 'cors',
-    })
-    .then(response => response.json())
-    .then(response => {
-      console.log({ response })
-      setEntries(response.data)
-    })
+    HttpClient.simpleRequest('blogs')
+      .then(response => {
+        setEntries(response.data)
+      })
   }, [])
 
 
   const getEntrySummary = (entryId: number, entryIndex: number) => {
-    fetch(`http://127.0.0.1:8000/summarize/${entryId}`, {
-      mode: 'cors',
-    })
-      .then(response => response.json())
+    HttpClient.simpleRequest(`summarize/${entryId}`)
       .then(response => {
         setEntries(
           (entries: string[]) => entries.map((entry, index) => index === entryIndex ? [...entry, response.data] : entry)
@@ -45,24 +39,18 @@ function App() {
       body: bodyElement.value,
     }
     console.log({ payload })
-    fetch(`http://127.0.0.1:8000/blogs`, {
+    HttpClient.simpleRequest('blogs', {
       method: 'post',
       body: JSON.stringify(payload),
       headers: {'Content-Type': 'application/json'},
-      mode: 'cors',
     })
-    .then(response => response.json())
     .then(response => {
-      console.log({ response })
       setEntries(response.data)
     })
   }
 
   const mockEntry = () => {
-    fetch(`http://127.0.0.1:8000/blogs/mock`, {
-      mode: 'cors',
-    })
-      .then(response => response.json())
+    HttpClient.simpleRequest('blogs/mock')
       .then(response => {
         setDefaultTitle(response.data.title)
         setDefaultBody(response.data.body)
