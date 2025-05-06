@@ -1,14 +1,12 @@
 import './App.css'
 import HttpClient from './utils/HttpClient';
-import { BLOG_FIELDS } from './constants';
+import { Entry } from './constants';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 
 function App() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [entries, setEntries] : [any[], Dispatch<SetStateAction<any[]>>] = useState([] as any[])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [entry, setEntry]: [any[]|null, Dispatch<SetStateAction<any[]|null>>] = useState(null as any[]|null)
+  const [entries, setEntries] : [Entry[], Dispatch<SetStateAction<Entry[]>>] = useState([] as Entry[])
+  const [entry, setEntry]: [Entry|null, Dispatch<SetStateAction<Entry|null>>] = useState(null as Entry|null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [defaultTitle, setDefaultTitle] : [any[], any] = useState([])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +30,7 @@ function App() {
     HttpClient.simpleRequest(`summarize/${entryId}`)
     .then(response => {
       setEntries(
-        (entries: string[]) => entries.map((entry, index) => index === entryIndex ? [...entry, response.data] : entry)
+        (entries: Entry[]) => entries.map((entry, index) => index === entryIndex ? { ...entry, summary: response.data } : entry)
       )
     })
   }
@@ -41,7 +39,7 @@ function App() {
       const payload = { [field]: newValue };
       
       if (entry)
-        HttpClient.simpleRequest(`blogs/${entry[BLOG_FIELDS.id]}`, {
+        HttpClient.simpleRequest(`blogs/${entry.id}`, {
           method: 'put',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
@@ -106,16 +104,16 @@ function App() {
             {entry && (<div>
               {
                 updatingTitle ?
-                <input className="form-control" onBlur={(evt) => updateField('title', evt.target.value, setUpdatingTitle)} defaultValue={entry[BLOG_FIELDS.title]}/> :
-                <h2 onClick={() => setUpdatingTitle(true)}>{entry[BLOG_FIELDS.title]}</h2>
+                <input className="form-control" onBlur={(evt) => updateField('title', evt.target.value, setUpdatingTitle)} defaultValue={entry.title}/> :
+                <h2 onClick={() => setUpdatingTitle(true)}>{entry.title}</h2>
               }
               {
         
                 updatingBody ?
-                <input className="form-control"onBlur={(evt) => updateField('body', evt.target.value, setUpdatingBody)} defaultValue={entry[BLOG_FIELDS.body]}/> :
-                <p onClick={() => setUpdatingBody(true)}>{entry[BLOG_FIELDS.body]}</p>
+                <input className="form-control"onBlur={(evt) => updateField('body', evt.target.value, setUpdatingBody)} defaultValue={entry.body}/> :
+                <p onClick={() => setUpdatingBody(true)}>{entry.body}</p>
               }
-              <small>{new Date(entry[BLOG_FIELDS.timestamp]).toLocaleString()} </small>
+              <small>{new Date(entry.created_at).toLocaleString()} </small>
               </div>
             )}
           </div>
@@ -127,15 +125,15 @@ function App() {
             <div key={"index_"+index} className='my-1 shadow-sm p-2 btn btn-light w-100'>
               <div className='d-flex justify-content-between'>
                 <div className='d-inline-block text-start'>
-                  <h4 onClick={()=>{fetchEntry(entryItem[BLOG_FIELDS.id])}}>{entryItem[BLOG_FIELDS.title]}</h4>
+                  <h4 onClick={()=>{fetchEntry(entryItem.id)}}>{entryItem.title}</h4>
                 </div>
                 <div className='d-inline-block'>
-                  {!entryItem?.[BLOG_FIELDS.summary] && <button className="btn btn-secondary" onClick={() => getEntrySummary(entryItem[BLOG_FIELDS.id], index)}>Summarize</button>}
+                  {!entryItem?.summary && <button className="btn btn-secondary" onClick={() => getEntrySummary(entryItem.id, index)}>Summarize</button>}
                 </div>
               </div>
               {
-                entryItem?.[BLOG_FIELDS.summary] &&
-                <p>{entryItem?.[BLOG_FIELDS.summary]}</p>
+                entryItem?.summary &&
+                <p>{entryItem?.summary}</p>
               }
             </div>
           )}

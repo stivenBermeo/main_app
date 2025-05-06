@@ -18,9 +18,11 @@ class DB(object):
     with psycopg.connect(self.get_connection_string()) as conn:
       with conn.cursor() as cur:
         cur.execute(query, values)
-        d = cur.fetchall()
-        cur.close()
-    return d
+        data = cur.fetchall()
+        colnames = [desc[0] for desc in cur.description]
+        data = [dict([column_name, t[index]] for index, column_name in enumerate(colnames)) for t in data]
+
+    return data
   
   def fetchAllEntries(self):
     return self.fetch("SELECT * FROM entries ORDER BY created_at DESC")

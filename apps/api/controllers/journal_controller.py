@@ -52,7 +52,7 @@ class JournalController():
 
   def summarize_entry(self, entry_id: int):
     entry = Database.fetch("SELECT * FROM entries WHERE id = %s", [entry_id])[0]
-    entry_body = entry[2]
+    entry_body = entry["body"]
 
     model = init_chat_model("llama3-8b-8192", model_provider="groq")
     messages = [
