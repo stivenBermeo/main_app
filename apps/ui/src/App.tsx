@@ -81,11 +81,12 @@ function App() {
 
   return <>
     <div className='container-fluid vh-100 py-1'>
-      <h1 className='text-center'>Journal</h1>
+      <h1 className='text-center py-1'>Journal</h1>
       <div className='d-flex h-90'>
         <div className='col-md-6 d-inline-block px-3 border border-danger'>
           <div className='px-3 h-50 border border-danger'>
             <h2>Create New Entry</h2>
+            <h5 className="btn text-primary mx-auto" onClick={() => {mockEntry()}}>Or Mock Entry With AI!</h5>
             <form onSubmit={(evt) => createNewEntry(evt)}>
               <div className='my-3'>
                 <input className="form-control" id="title" name="title" placeholder="Title" defaultValue={defaultTitle} required/>
@@ -94,13 +95,12 @@ function App() {
                 <textarea className="form-control" id="body" name="body" placeholder='Body' defaultValue={defaultBody} required/>
               </div>
               <div className='d-flex'>
-                <div className="btn btn-secondary mx-auto" onClick={() => {mockEntry()}}>Mock Entry With AI</div>
                 <button className='btn btn-primary mx-auto'>Create Entry</button>
               </div>
             </form>
           </div>
           <div className='px-3 h-50 overflow-scroll border border-danger'>
-            {!entry && "No entry selected"}
+            {!entry && <div className="btn btn-primary col-lg-12 text-center">Click an entry to see details here ! -{'>'}</div>}
             {entry && (<div>
               {
                 updatingTitle ?
@@ -128,7 +128,7 @@ function App() {
                   <h4 onClick={()=>{fetchEntry(entryItem.id)}}>{entryItem.title}</h4>
                 </div>
                 <div className='d-inline-block'>
-                  {!entryItem?.summary && <button className="btn btn-secondary" onClick={() => getEntrySummary(entryItem.id, index)}>Summarize</button>}
+                  {!entryItem?.summary && <button className="btn btn-small btn-primary" onClick={() => getEntrySummary(entryItem.id, index)}>Summarize</button>}
                 </div>
               </div>
               {
